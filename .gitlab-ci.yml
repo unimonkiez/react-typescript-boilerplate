@@ -1,13 +1,8 @@
 image: node:8.9.4
 
-variables:
-  HEROKU_API_KEY: ********
-  HEROKU_APP_NAME: ***
-
 stages:
   - install
   - test
-  - deploy
 
 installation:
   stage: install
@@ -31,35 +26,3 @@ test:
     - installation
   script:
     - yarn run test
-
-deploy-web:
-  only:
-    - tags
-  stage: deploy
-  dependencies:
-    - installation
-  image: kahwee/node-ruby-dpl:latest
-  script:
-    - npm run build:web
-    - cd ./web
-    - git init
-    - git config user.name "Pipeline CI"
-    - git config user.email "pipeline@ci.com"
-    - git add -A
-    - git commit -m "push for heroku only. commit must be reset after deployment is complete."
-    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
-    - cd ..
-build-android:
-  stage: deploy
-  image: beevelop/android-nodejs:v8.9.4
-  dependencies:
-    - installation
-  script:
-    - $ANDROID_HOME/tools/android list target
-    - npm run android:copy-licenses
-    - npm run create:android:release
-    - ls ./android/app/build/outputs/apk/
-    - mv ./android/app/build/outputs/apk/app-release.apk app.apk
-  artifacts:
-    paths:
-      - ./app.apk

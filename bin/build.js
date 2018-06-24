@@ -3,14 +3,10 @@ const getWebpackConfig = require('./get-webpack-config');
 
 const args = process.argv.slice(2);
 const isWatching = args.indexOf('-w') !== -1;
-const typeIndex = args.indexOf('--type');
 const isDev = args.indexOf('--dev') !== -1;
 
-const typeValue = args[typeIndex + 1];
-const buildType = Number(typeValue);
 
 const webpackConfig = getWebpackConfig({
-  type: buildType,
   bail: !isWatching,
   isProd: !isDev,
 });
